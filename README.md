@@ -22,7 +22,7 @@ El objetivo principal de esta investigación es analizar el **Student Performanc
 | Nombre | Rol | GitHub / Contacto |
 | :--- | :---: | :---: |
 | **Juan de Dios Díaz Ríos** | Integrante | [@juandiazr513](https://github.com/juandiazr513) |
-| **Francisco Fariña Molina** | Integrante | [Contacto](#) |
+| **Francisco Fariña Molina** | Integrante | [@ffarina11](https://github.com/ffarina11)|
 | **Constanza Moreno Giacometto** | Integrante | [Contacto](#) |
 | **Yenne Sepúlveda Jerez** | Integrante | [Contacto](#) |
 
@@ -56,7 +56,7 @@ Sigue estos pasos en tu terminal (por ejemplo, **Git Bash**) para clonar el repo
 
 ### 1. Clonar el repositorio
 ```bash
-git clone https://github.com/juandiazr513/proyecto-grupo7-mcdi500-JD.git
+git clone https://github.com/ffarina11/proyecto-grupo7-mcdi500-FF.git
 cd proyecto-grupo7-mcdi500-JD
 ```
 
