@@ -1,9 +1,15 @@
+import sys
+import os
+sys.path.append(os.path.abspath("../src"))
+
+from librerias import *
+
 def cargar_dataset(ruta):
 
     """
     Carga un archivo CSV y devuelve un DataFrame.
     """
-    return pd.read_csv(ruta) 
+    return pd.read_csv(ruta,sep=";") 
  
 def resumen_dataset(df, nombre="Dataset"):
 
