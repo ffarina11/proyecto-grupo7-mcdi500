@@ -3,7 +3,8 @@ import os
 sys.path.append(os.path.abspath("../src"))
 
 from librerias import *
-##
+###
+
 def cargar_dataset(ruta):
 
     """
@@ -206,7 +207,7 @@ def limpiar_dataset(df: pd.DataFrame, nombre: str) -> pd.DataFrame:
     print(f"  [1] Duplicados eliminados : {nd}  ({'ninguno' if nd==0 else nd})")
 
     # 2. Strip de espacios en columnas de texto
-    cols_str = df_c.select_dtypes(include=['object','str']).columns
+    cols_str = df_c.select_dtypes(include=['object']).columns
     for col in cols_str:
         df_c[col] = df_c[col].str.strip()
     print(f"  [2] Strip en {len(cols_str)} columnas de texto ✓")
