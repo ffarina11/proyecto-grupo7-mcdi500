@@ -377,3 +377,16 @@ def validar_dataset_final(df_orig: pd.DataFrame, df_proc: pd.DataFrame, nombre: 
         print(f"  → ERROR: {e} ❌")
         ok = False
     return ok
+
+# ============================================================
+# FUNCIÓN: integrar_datasets
+# Combina dos DataFrames mediante concatenación vertical.
+# Parámetros: df_a, df_b (DataFrames con col 'asignatura')
+# Retorna: pd.DataFrame combinado con índice reiniciado
+# ============================================================
+def integrar_datasets(df_a: pd.DataFrame, df_b: pd.DataFrame) -> pd.DataFrame:
+    """Concatena verticalmente dos DataFrames. Requiere columna 'asignatura'."""
+    df_comb = pd.concat([df_a, df_b], axis=0, ignore_index=True)
+    print(f"  Concatenado: {len(df_a)} + {len(df_b)} = {len(df_comb)} registros")
+    print("  Distribución:\n", df_comb['asignatura'].value_counts().to_string())
+    return df_comb
