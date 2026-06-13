@@ -11,7 +11,7 @@
 
 ##  Descripción
 
-Este repositorio contiene el proyecto transversal del curso **MCDI500 — Programación para la ciencia** del **Magíster en Ciencias de Datos e Inteligencia Artificial** de la *Universidad Andrés Bello (UNAB)*.
+Este repositorio contiene el proyecto transversal del curso **MCDI500 — Programación para la ciencia de datos** del **Magíster en Ciencias de Datos e Inteligencia Artificial** de la *Universidad Andrés Bello (UNAB)*.
 
 El objetivo principal de esta investigación es analizar el **Student Performance Dataset** [(Cortez & Silva, 2008)](https://archive.ics.uci.edu/dataset/320/student+performance) para identificar y evaluar qué factores socioeconómicos y de preparación previa explican de mejor manera las diferencias en el rendimiento académico entre estudiantes de dos establecimientos educacionales portugueses.
 
@@ -38,16 +38,30 @@ proyecto-grupo7-mcdi500/
 │   ├── 📂 raw/                      # Datos originales sin modificar (.csv)
 │   │   ├── student-mat.csv
 │   │   └── student-por.csv
-│   └── 📂 processed/                # Datos limpios y procesados (Fase 2)
+│   │
+│   ├── 📂 processed/               # Datos limpios y transformados (Fase 2)
+│   │   ├── student_mat_clean.csv
+│   │   ├── student_mat_clean_encode.csv
+│   │   ├── student_por_clean.csv
+│   │   ├── student_por_clean_encode.csv
+│   │   ├──student_union_clean_encode.csv
+    │   └── fig_distribucion_g3.png 
+│   │   
+│   └── 📂 development/             # Figuras y outputs exploratorios 
+│       
+│
 ├── 📂 notebooks/
-│   └── 📓 F1_Definicion.ipynb       # Fase 1: Definición del problema y EDA inicial
-├── 📂 src/                          # Scripts y funciones modulares reutilizables
-│   ├── functions.py 
-│   └── librerias.py            
-├── 📂 docs/                         # Documentación complementaria e informes
-├── 📄 .gitignore                    # Archivos ignorados por Git
-├── 📄 README.md                     # Descripción general del proyecto
-└── 📄 requirements.txt              # Dependencias del entorno de desarrollo
+│   ├── F1_Definicion.ipynb         # Fase 1: Definición del problema y EDA inicial
+│   └── F2_limpieza.ipynb           # Fase 2: Limpieza, transformación y validación
+│
+├── 📂 src/                        # Scripts reutilizables
+│   ├── functions.py
+│   └── librerias.py
+│
+├── 📂 docs/                       # Documentación complementaria e informes
+├── 📄 .gitignore                  # Archivos ignorados por Git
+├── 📄 README.md                   # Descripción general del proyecto
+└── 📄 requirements.txt            # Dependencias del entorno de desarrollo
 ```
 
 ---
@@ -112,6 +126,57 @@ data/raw
 
 > Nota: Esta sección asegura la reproducibilidad de la carga inicial de datos y la estructura de carpetas, siguiendo las buenas prácticas de manejo de datos.
 ---
+
+
+## Limpieza, Transformación y Validación
+
+En la Fase 2 del proyecto se implementó un pipeline reproducible de limpieza, transformación y validación de datos, con el objetivo de asegurar la calidad del dataset antes de las etapas de modelado predictivo.
+
+### 1. Ejecución del notebook
+
+Con el entorno virtual activo, desde la raíz del repositorio:
+
+```bash
+jupyter lab 
+```
+
+Luego abrir:
+
+```bash
+notebooks/F2_limpieza.ipynb
+```
+
+> Ejecutar con **Kernel → Restart & Run All** para garantizar la reproducibilidad completa.
+
+
+
+### 2. Organización de datos procesados
+
+Los datos procesados se exportan automáticamente a `data/processed/`, mientras que las visualizaciones generadas durante el análisis exploratorio se almacenan en `data/development/`.
+
+```text
+data/processed/
+├── student_mat_clean.csv            # Dataset limpio (Matemáticas)
+├── student_mat_clean_encode.csv     # Dataset limpio + transformaciones (Matemáticas)
+├── student_por_clean.csv            # Dataset limpio (Portugués)
+├── student_por_clean_encode.csv     # Dataset limpio + transformaciones (Portugués)
+├── student_union_clean_encode.csv   # Dataset combinado (Matemáticas + Portugués)
+└── fig_distribucion_g3.png          # Distribución de la variable objetivo G3
+data/development/                    # Archivos intermedios y de exploración
+```
+
+### 3. Dependencias
+
+Las dependencias necesarias para ejecutar el proyecto se encuentran en el archivo `requirements.txt`.
+
+Para instalarlas ejecutar:
+
+```bash
+pip install -r requirements.txt
+
+```
+
+
 
 ##  Información del Dataset
 
