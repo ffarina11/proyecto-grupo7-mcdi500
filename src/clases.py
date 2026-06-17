@@ -121,10 +121,10 @@ class PreprocesadorAsignatura:
         categorical_cols = ['school', 'sex', 'address', 'famsize', 'Pstatus', 'Mjob', 'Fjob', 'reason', 
                      'guardian', 'schoolsup', 'famsup', 'paid', 'activities', 'nursery', 'higher', 
                      'internet', 'romantic']
-        plot_distribucion_categoricas(self.df, categorical_cols)
+        plot_distribucion_categoricas(self.df, categorical_cols, titulo=self.NOMBRE_ASIGNATURA)
         detectar_outliers_iqr(self.df, ['age', 'absences', 'G1', 'G2', 'G3'],
                                self.NOMBRE_ASIGNATURA)
-        plot_outliers_boxplot(self.df, columna='absences')
+        plot_outliers_boxplot(self.df, columna='absences', titulo=self.NOMBRE_ASIGNATURA)
         #if mostrar_correlaciones:
         analizar_correlaciones(self.df, nombre_dataset=self.NOMBRE_ASIGNATURA)       
         analizar_g3_cero(self.df, self.NOMBRE_ASIGNATURA)

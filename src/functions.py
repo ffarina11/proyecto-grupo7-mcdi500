@@ -413,20 +413,11 @@ def estadisticas_descriptivas(df):
 
 
 ##FUNCION PARA GRAFICAS VARIABLES CATEGORICAS F3*
-def plot_distribucion_categoricas(df, categorical_cols, 
-                                     output_path='../data/processed/F3/distribucion_categoricas.png',
-                                     figsize=(15, 10), dpi=100):
-    """
-    Genera un grid de gráficos de barras con la distribución de cada columna
-    categórica indicada y guarda la figura como imagen.
+def plot_distribucion_categoricas(df, categorical_cols,
+                                   titulo='General',
+                                   output_dir='../data/processed/F3/',
+                                   figsize=(15, 10), dpi=100):
 
-    Parámetros:
-        df (pd.DataFrame): DataFrame con los datos.
-        categorical_cols (list): Lista de nombres de columnas categóricas.
-        output_path (str): Ruta donde se guardará la imagen generada.
-        figsize (tuple): Tamaño de la figura.
-        dpi (int): Resolución de la imagen guardada.
-    """
     n_cols = 4
     n_rows = math.ceil(len(categorical_cols) / n_cols)
 
@@ -445,24 +436,25 @@ def plot_distribucion_categoricas(df, categorical_cols,
     plt.suptitle("Distribución de Variables Categóricas", fontsize=16, fontweight='bold', y=1.02)
     plt.tight_layout()
 
-    output_dir = os.path.dirname(output_path)
-    if output_dir:
-        os.makedirs(output_dir, exist_ok=True)
+    # ── Nombre de archivo basado en el título ─────────────────
+    nombre = titulo.lower().replace(' ', '_').replace('á','a').replace('é','e') \
+                           .replace('í','i').replace('ó','o').replace('ú','u')
+    output_path = os.path.join(output_dir, f"fig_distribucion_categoricas_{nombre}.png")
 
-    
+    os.makedirs(output_dir, exist_ok=True)
     plt.savefig(output_path, dpi=dpi, bbox_inches='tight')
     plt.show()
 
 ##funcion para graficar boxplot de ausencias F3*
 def plot_outliers_boxplot(df, columna='absences',
-                            suptitulo=None,
-                            output_path='../data/processed/F3/fig_outliers_absences.png',
-                            figsize=(6, 4), dpi=100):
+                          suptitulo=None,
+                          titulo='General',
+                          output_dir='../data/processed/F3/',
+                          figsize=(6, 4), dpi=100):
     """
     Genera un boxplot de una columna para visualizar su distribución/outliers
     según criterio IQR.
-
-    Parámetros:
+     Parámetros:
         df (pd.DataFrame): DataFrame con los datos.
         columna (str): Nombre de la columna a graficar.
         suptitulo (str): Título general de la figura. Si es None, se genera uno automático.
@@ -479,35 +471,27 @@ def plot_outliers_boxplot(df, columna='absences',
                boxprops=dict(facecolor='#AED6F1', color='#2874A6'),
                medianprops=dict(color='red', linewidth=2),
                flierprops=dict(marker='o', color='orange', alpha=0.6))
-    ax.set_title('Distribución de Ausencias ', fontweight='bold')
+    ax.set_title('Distribución de Ausencias', fontweight='bold')
     ax.set_ylabel(columna)
     ax.set_xticks([])
 
     plt.suptitle(suptitulo, y=1.02)
     plt.tight_layout()
 
-    output_dir = os.path.dirname(output_path)
-    if output_dir:
-        os.makedirs(output_dir, exist_ok=True)
+    # ── Nombre de archivo basado en título y columna ───────────
+    nombre = titulo.lower().replace(' ', '_').replace('á','a').replace('é','e') \
+                           .replace('í','i').replace('ó','o').replace('ú','u')
+    output_path = os.path.join(output_dir, f"fig_outliers_{columna}_{nombre}.png")
 
+    os.makedirs(output_dir, exist_ok=True)
     plt.savefig(output_path, dpi=dpi, bbox_inches='tight')
     plt.show()
 
 
 def plot_distribucion_g3(df, titulo='Matemáticas', color='#3498DB',
-                          output_path='../data/processed/fig_distribucion_g3.png',
+                          output_dir='../data/processed/F3/',
                           figsize=(6, 4), dpi=100):
-    """
-    Genera un histograma de la variable G3 para un único DataFrame.
 
-    Parámetros:
-        df (pd.DataFrame): DataFrame con los datos.
-        titulo (str): Título descriptivo del gráfico.
-        color (str): Color de las barras del histograma.
-        output_path (str): Ruta donde se guardará la imagen.
-        figsize (tuple): Tamaño de la figura.
-        dpi (int): Resolución de la imagen guardada.
-    """
     fig, ax = plt.subplots(figsize=figsize)
 
     ax.hist(df['G3'], bins=21, range=(-0.5, 20.5), color=color, edgecolor='white', alpha=0.85)
@@ -522,12 +506,15 @@ def plot_distribucion_g3(df, titulo='Matemáticas', color='#3498DB',
     plt.suptitle('Variable Objetivo G3: Calificación Final', fontsize=12)
     plt.tight_layout()
 
-    output_dir = os.path.dirname(output_path)
-    if output_dir:
-        os.makedirs(output_dir, exist_ok=True)
+    # ── Nombre de archivo basado en el título ─────────────────
+    nombre = titulo.lower().replace(' ', '_').replace('á','a').replace('é','e') \
+                           .replace('í','i').replace('ó','o').replace('ú','u')
+    output_path = os.path.join(output_dir, f"fig_distribucion_g3_{nombre}.png")
 
+    os.makedirs(output_dir, exist_ok=True)
     plt.savefig(output_path, dpi=dpi, bbox_inches='tight')
     plt.show()
+
 
 # función de ordenamiento merge sort F3
 def merge_sort(lista):
