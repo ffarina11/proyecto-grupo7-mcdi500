@@ -45,7 +45,8 @@ proyecto-grupo7-mcdi500/
 │   │   ├── student_por_clean.csv
 │   │   ├── student_por_clean_encode.csv
 │   │   ├──student_union_clean_encode.csv
-│    │   └── fig_distribucion_g3.png 
+│   │   ├── fig_distribucion_g3.png 
+│   │   └── 📂 F3                        # Archivos generados por métodos de la clase
 │   │   
 │   └── 📂 development/             # Figuras y outputs exploratorios 
 │       
@@ -53,13 +54,13 @@ proyecto-grupo7-mcdi500/
 ├── 📂 notebooks/
 │   ├── F1_Definicion.ipynb                  # Fase 1: Definición del problema y EDA inicial
 │   └── F2_limpieza.ipynb                    # Fase 2: Limpieza, transformación y validación
-│   └── F3_S02_Nucleo_Algoritmico_POO.ipynb  # Fase 3: Núcleo algorítmico y POO
+│   └── F3_Nucleo_Algoritmico_POO.ipynb      # Fase 3: Núcleo algorítmico y POO
 │
 ├── 📂 src/                        # Scripts reutilizables
 │   ├── functions.py               # Pipeline funcional (Fase 2)
 │   ├── librerias.py           
-│   ├── clases.py                   # Clases POO: PreprocesadorAsignatura y subclases (Fase 3)
-│   └── recursivas.py               # Algoritmos recursivos (Fase 3)
+│   └── clases.py                   # Clases POO: PreprocesadorAsignatura y subclases (Fase 3)
+│   
 │    
 ├── 📂 docs/                       # Documentación complementaria e informes
 ├── 📄 .gitignore                  # Archivos ignorados por Git
@@ -184,19 +185,19 @@ jupyter lab
 Luego abrir:
 
 ```bash
-notebooks/F3_S02_Nucleo_Algoritmico_POO.ipynb
+notebooks/F3_Nucleo_Algoritmico_POO.ipynb
 ```
 y ejecutar con Kernel → Restart & Run All.
 
-> Es necesario haber ejecutado previamente F2_limpieza.ipynb o contar con los archivos en data/processed/, ya que la Fase 3 reutiliza el pipeline de la Fase 2.
+
 
 ### 2. Arquitectura modular
 
 La Fase 3 incorpora nuevos módulos reutilizables dentro de src/:
 | Módulo | Responsabilidad |
 | :--- | :--- |
+| `librerias.py` | Contiene las librerias necesarias para desarrollar el proyecto. |
 | `clases.py` | Define la clase base `PreprocesadorAsignatura` y las subclases `PreprocesadorMatematicas` y `PreprocesadorPortugues`. |
-| `recursivas.py` | Implementa los algoritmos recursivos `merge_sort()` y `combinar()`. |
 | `functions.py` | Contiene las funciones del pipeline desarrollado en la Fase 2, reutilizadas por los métodos de las clases de preprocesamiento. |
 
 ### 3. Funcionalidades implementadas
