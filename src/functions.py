@@ -1,16 +1,32 @@
+import math
 import sys
 import os
+import nbformat
+from nbconvert.preprocessors import ExecutePreprocessor
 sys.path.append(os.path.abspath("../src"))
 
 from librerias import *
 ###
 
 def cargar_dataset(ruta):
-
     """
     Carga un archivo CSV y devuelve un DataFrame.
+    Maneja errores comunes durante la carga del archivo.
     """
-    return pd.read_csv(ruta,sep=";") 
+    try:
+        df = pd.read_csv(ruta, sep=";")
+        return df
+
+    except FileNotFoundError:
+        print(f"Error: No se encontró el archivo en la ruta '{ruta}'.")
+    except pd.errors.EmptyDataError:
+        print("Error: El archivo está vacío.")
+    except pd.errors.ParserError:
+        print("Error: Hubo un problema al parsear el archivo. Verifica el separador o el formato.")
+    except Exception as e:
+        print(f"Ocurrió un error inesperado: {e}")
+
+    return None
  
 def resumen_dataset(df, nombre="Dataset"):
 
@@ -47,7 +63,6 @@ def mostrar_primeras_filas(df, n=5):
 
     return df.head(n)
  
-
  # ============================================================
 # FUNCIÓN: validar_rangos
 # Verifica que las variables numéricas estén dentro de los
@@ -178,6 +193,7 @@ def analizar_correlaciones(df, nombre_dataset="Dataset", columnas_excluir=None, 
 # ============================================================
 def analizar_g3_cero(df: pd.DataFrame, nombre: str) -> None:
     """Clasifica los registros G3=0 en deserciones (G2=0) vs reprobados (G2>0)."""
+    print("\n=== Análisis G3 = 0 ===")
     g3_0    = (df['G3'] == 0).sum()
     deserc  = ((df['G2'] == 0) & (df['G3'] == 0)).sum()
     reprobad= g3_0 - deserc
@@ -390,3 +406,174 @@ def integrar_datasets(df_a: pd.DataFrame, df_b: pd.DataFrame) -> pd.DataFrame:
     print(f"  Concatenado: {len(df_a)} + {len(df_b)} = {len(df_comb)} registros")
     print("  Distribución:\n", df_comb['asignatura'].value_counts().to_string())
     return df_comb
+
+ ##Funcion para mostrar estadisticas descriptivas F3*
+def estadisticas_descriptivas(df):
+     return df.describe().round(2)
+
+
+##FUNCION PARA GRAFICAS VARIABLES CATEGORICAS F3*
+def plot_distribucion_categoricas(df, categorical_cols, 
+                                     output_path='../data/processed/F3/distribucion_categoricas.png',
+                                     figsize=(15, 10), dpi=100):
+    """
+    Genera un grid de gráficos de barras con la distribución de cada columna
+    categórica indicada y guarda la figura como imagen.
+
+    Parámetros:
+        df (pd.DataFrame): DataFrame con los datos.
+        categorical_cols (list): Lista de nombres de columnas categóricas.
+        output_path (str): Ruta donde se guardará la imagen generada.
+        figsize (tuple): Tamaño de la figura.
+        dpi (int): Resolución de la imagen guardada.
+    """
+    n_cols = 4
+    n_rows = math.ceil(len(categorical_cols) / n_cols)
+
+    plt.figure(figsize=figsize)
+    for i, col in enumerate(categorical_cols):
+        counts = df[col].value_counts()
+        counts_df = counts.rename_axis(col).reset_index(name='count')
+        palette = sns.color_palette('tab20', len(counts_df))
+
+        plt.subplot(n_rows, n_cols, i + 1)
+        sns.barplot(x='count', y=col, data=counts_df, hue=col, dodge=False, palette=palette, legend=False)
+        plt.title(f'Distribution of {col}')
+        plt.xlabel('Count')
+        plt.ylabel(col)
+
+    plt.suptitle("Distribución de Variables Categóricas", fontsize=16, fontweight='bold', y=1.02)
+    plt.tight_layout()
+
+    output_dir = os.path.dirname(output_path)
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
+
+    
+    plt.savefig(output_path, dpi=dpi, bbox_inches='tight')
+    plt.show()
+
+##funcion para graficar boxplot de ausencias F3*
+def plot_outliers_boxplot(df, columna='absences',
+                            suptitulo=None,
+                            output_path='../data/processed/F3/fig_outliers_absences.png',
+                            figsize=(6, 4), dpi=100):
+    """
+    Genera un boxplot de una columna para visualizar su distribución/outliers
+    según criterio IQR.
+
+    Parámetros:
+        df (pd.DataFrame): DataFrame con los datos.
+        columna (str): Nombre de la columna a graficar.
+        suptitulo (str): Título general de la figura. Si es None, se genera uno automático.
+        output_path (str): Ruta donde se guardará la imagen.
+        figsize (tuple): Tamaño de la figura.
+        dpi (int): Resolución de la imagen guardada.
+    """
+    if suptitulo is None:
+        suptitulo = f'Outliers en variable {columna} (criterio IQR)'
+
+    fig, ax = plt.subplots(figsize=figsize)
+
+    ax.boxplot(df[columna], vert=True, patch_artist=True,
+               boxprops=dict(facecolor='#AED6F1', color='#2874A6'),
+               medianprops=dict(color='red', linewidth=2),
+               flierprops=dict(marker='o', color='orange', alpha=0.6))
+    ax.set_title('Distribución de Ausencias ', fontweight='bold')
+    ax.set_ylabel(columna)
+    ax.set_xticks([])
+
+    plt.suptitle(suptitulo, y=1.02)
+    plt.tight_layout()
+
+    output_dir = os.path.dirname(output_path)
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
+
+    plt.savefig(output_path, dpi=dpi, bbox_inches='tight')
+    plt.show()
+
+
+def plot_distribucion_g3(df, titulo='Matemáticas', color='#3498DB',
+                          output_path='../data/processed/fig_distribucion_g3.png',
+                          figsize=(6, 4), dpi=100):
+    """
+    Genera un histograma de la variable G3 para un único DataFrame.
+
+    Parámetros:
+        df (pd.DataFrame): DataFrame con los datos.
+        titulo (str): Título descriptivo del gráfico.
+        color (str): Color de las barras del histograma.
+        output_path (str): Ruta donde se guardará la imagen.
+        figsize (tuple): Tamaño de la figura.
+        dpi (int): Resolución de la imagen guardada.
+    """
+    fig, ax = plt.subplots(figsize=figsize)
+
+    ax.hist(df['G3'], bins=21, range=(-0.5, 20.5), color=color, edgecolor='white', alpha=0.85)
+    ax.axvline(10, color='red', linestyle='--', linewidth=1.5, label='Umbral aprobación (10)')
+    ax.axvline(df['G3'].mean(), color='navy', linestyle=':', linewidth=1.5,
+               label=f"Media={df['G3'].mean():.1f}")
+    ax.set_title(f'Distribución G3 — {titulo}', fontweight='bold')
+    ax.set_xlabel('Calificación final (G3)')
+    ax.set_ylabel('Frecuencia')
+    ax.legend(fontsize=9)
+
+    plt.suptitle('Variable Objetivo G3: Calificación Final', fontsize=12)
+    plt.tight_layout()
+
+    output_dir = os.path.dirname(output_path)
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
+
+    plt.savefig(output_path, dpi=dpi, bbox_inches='tight')
+    plt.show()
+
+# función de ordenamiento merge sort F3
+def merge_sort(lista):
+    """
+    Ordena una lista usando Merge Sort recursivo (divide y vencerás, O(n log n)).
+    CASO BASE     : lista de 0 o 1 elemento → ya ordenada, se retorna tal cual.
+    CASO RECURSIVO: divide la lista a la mitad, ordena cada parte
+                    recursivamente y combina los resultados.
+    """
+    if len(lista) <= 1:               # CASO BASE: lista mínima, nada que ordenar
+        return lista
+
+    medio = len(lista) // 2
+    izq = merge_sort(lista[:medio])   # divide → ordena mitad izquierda
+    der = merge_sort(lista[medio:])   # divide → ordena mitad derecha
+    return combinar(izq, der)         # y vence (combina)
+
+# Función auxiliar para combinar dos listas ordenadas en una sola lista ordenada
+def combinar(a, b):
+    """Fusiona dos listas ya ordenadas en una sola lista ordenada."""
+    res, i, j = [], 0, 0
+    while i < len(a) and j < len(b):
+        if a[i] <= b[j]:
+            res.append(a[i]); i += 1
+        else:
+            res.append(b[j]); j += 1
+    res.extend(a[i:]); res.extend(b[j:])
+    return res
+
+# Función para determinar aprobado usando un bucle fila a fila F3*
+def aprobado_bucle(df: pd.DataFrame) -> list:
+    """
+    Determina si cada estudiante aprobó (G3 >= 10) usando un bucle fila a fila.
+    Complejidad: O(n) — pero lento por el overhead de Python en cada iteración.
+    """
+    resultado = []
+    for _, fila in df.iterrows():        # iterrows es lento: crea un objeto por fila
+        resultado.append(1 if fila["G3"] >= 10 else 0)
+    return resultado
+
+# Función para determinar aprobado usando operación vectorizada F3*
+def aprobado_vectorizado(df: pd.DataFrame) -> pd.Series:
+    """
+    Determina si cada estudiante aprobó (G3 >= 10) con operación vectorizada.
+    Complejidad: O(n) — pero rápido porque opera en C/NumPy de una sola vez.
+    """
+    return (df["G3"] >= 10).astype(int)
+
+
