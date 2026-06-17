@@ -45,19 +45,22 @@ proyecto-grupo7-mcdi500/
 │   │   ├── student_por_clean.csv
 │   │   ├── student_por_clean_encode.csv
 │   │   ├──student_union_clean_encode.csv
-    │   └── fig_distribucion_g3.png 
+│    │   └── fig_distribucion_g3.png 
 │   │   
 │   └── 📂 development/             # Figuras y outputs exploratorios 
 │       
 │
 ├── 📂 notebooks/
-│   ├── F1_Definicion.ipynb         # Fase 1: Definición del problema y EDA inicial
-│   └── F2_limpieza.ipynb           # Fase 2: Limpieza, transformación y validación
+│   ├── F1_Definicion.ipynb                  # Fase 1: Definición del problema y EDA inicial
+│   └── F2_limpieza.ipynb                    # Fase 2: Limpieza, transformación y validación
+│   └── F3_S02_Nucleo_Algoritmico_POO.ipynb  # Fase 3: Núcleo algorítmico y POO
 │
 ├── 📂 src/                        # Scripts reutilizables
-│   ├── functions.py
-│   └── librerias.py
-│
+│   ├── functions.py               # Pipeline funcional (Fase 2)
+│   ├── librerias.py           
+│   ├── clases.py                   # Clases POO: PreprocesadorAsignatura y subclases (Fase 3)
+│   └── recursivas.py               # Algoritmos recursivos (Fase 3)
+│    
 ├── 📂 docs/                       # Documentación complementaria e informes
 ├── 📄 .gitignore                  # Archivos ignorados por Git
 ├── 📄 README.md                   # Descripción general del proyecto
@@ -165,18 +168,48 @@ data/processed/
 data/development/                    # Archivos intermedios y de exploración
 ```
 
-### 3. Dependencias
 
-Las dependencias necesarias para ejecutar el proyecto se encuentran en el archivo `requirements.txt`.
 
-Para instalarlas ejecutar:
+## Núcleo Algorítmico y Programación Orientada a Objetos
+La Fase 3 consolida el pipeline de la Fase 2 dentro de un núcleo algorítmico orientado a objetos, incorporando principios de POO, algoritmos recursivos y análisis de eficiencia computacional.
+
+### 1. Ejecución del notebook
+
+Con el entorno virtual activo, desde la raíz del repositorio:
 
 ```bash
-pip install -r requirements.txt
-
+jupyter lab 
 ```
 
+Luego abrir:
 
+```bash
+notebooks/F3_S02_Nucleo_Algoritmico_POO.ipynb
+```
+y ejecutar con Kernel → Restart & Run All.
+
+> Es necesario haber ejecutado previamente F2_limpieza.ipynb o contar con los archivos en data/processed/, ya que la Fase 3 reutiliza el pipeline de la Fase 2.
+
+### 2. Arquitectura modular
+
+La Fase 3 incorpora nuevos módulos reutilizables dentro de src/:
+| Módulo | Responsabilidad |
+| :--- | :--- |
+| `clases.py` | Define la clase base `PreprocesadorAsignatura` y las subclases `PreprocesadorMatematicas` y `PreprocesadorPortugues`. |
+| `recursivas.py` | Implementa los algoritmos recursivos `merge_sort()` y `combinar()`. |
+| `functions.py` | Contiene las funciones del pipeline desarrollado en la Fase 2, reutilizadas por los métodos de las clases de preprocesamiento. |
+
+### 3. Funcionalidades implementadas
+- Encapsulación del pipeline de preprocesamiento mediante Programación Orientada a Objetos.
+- Aplicación de herencia y polimorfismo mediante clases especializadas por asignatura.
+- Implementación y validación de algoritmos recursivos para el procesamiento de datos.
+- Comparación de eficiencia entre enfoques iterativos y vectorizados.
+- Validación automática de la integridad de los datasets procesados.
+- Exportación de datasets limpios y transformados para etapas posteriores del proyecto.
+
+
+
+> **Nota:** Todas las dependencias necesarias para ejecutar los notebooks y scripts del proyecto se encuentran especificadas en `requirements.txt`. La instalación del entorno se describe en la sección **Cómo reproducir el entorno**.
 
 ##  Información del Dataset
 
