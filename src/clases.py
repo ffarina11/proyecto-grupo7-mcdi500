@@ -43,7 +43,7 @@ from functions import (
     ,analizar_correlaciones,
     analizar_g3_cero, limpiar_dataset, winsorizacion,
     codificar_binarias, codificar_ohe, crear_variables_derivadas,
-    validar_dataset_final, exportar_dataset,
+    validar_dataset_final, exportar_dataset,generar_datos_sinteticos_estudiantes
 )
 
 
@@ -94,11 +94,21 @@ class PreprocesadorAsignatura:
 
         Nota: `cargar_dataset()` (Fase 2) solo lee el CSV y retorna el DataFrame,
         """
-        self.df_raw = cargar_dataset(self.ruta)
-        self.df = self.df_raw.copy()
-        print(f"  ✓ {self.NOMBRE_ASIGNATURA}: {self.df.shape[0]} filas × "
-              f"{self.df.shape[1]} columnas cargadas desde '{self.ruta}'")
+        if os.path.exists(self.ruta):
+            self.df_raw = cargar_dataset(self.ruta)
+            self.df = self.df_raw.copy()
+            origen = "CSV real"
+        else:
+            self.df_raw = generar_datos_sinteticos_estudiantes(asignatura=self.NOMBRE_ASIGNATURA)
+            self.df = self.df_raw.copy()
+            origen = "datos sintéticos (respaldo)"
+
+        # Imprimir resumen sencillo del estado de carga (evita llamadas a métodos/atributos inexistentes)
+        print(f"Datos cargados desde {origen}: {self.df.shape[0]} filas x {self.df.shape[1]} columnas")
         return self.df
+
+
+
 
     # --------------------------------------------------------
     # 2. EXPLORACIÓN

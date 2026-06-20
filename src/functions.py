@@ -563,4 +563,159 @@ def aprobado_vectorizado(df: pd.DataFrame) -> pd.Series:
     """
     return (df["G3"] >= 10).astype(int)
 
+##FUNCION PARA GRAFICAR RADAR COMPARATIVO MAT VS POR F4*
+def plot_radar_reprobaciones(df_mat, df_por,
+                              output_dir='../data/processed/F4/',
+                              figsize=(14, 7.8), dpi=110):
+    from matplotlib.lines import Line2D
 
+    #metricas    = ['studytime', 'G3', 'Walc', 'Medu', 'absences']
+    #nombres_eje = ['Tiempo\nestudio', 'Nota final', 'Alcohol\nfin de semana',
+    #               'Educ.\nmadre', 'Ausencias']
+
+    metricas    = ['studytime', 'G3', 'nivel_alcohol', 'edu_familiar_media', 'absences']
+    nombres_eje = ['Tiempo\nestudio', 'Nota final', 'Alcohol\nen la semana',
+                   'Educ.\nPadres', 'Ausencias']
+
+    COLOR_0    = '#2BB5A0'
+    COLOR_3MAS = '#E8714A'
+    angulos    = np.linspace(0, 2 * np.pi, len(metricas), endpoint=False).tolist()
+    angulos   += angulos[:1]
+
+    configs = [
+        {'df': df_mat, 'titulo': 'Matemáticas'},
+        {'df': df_por, 'titulo': 'Portugués'},
+    ]
+
+    fig, axes = plt.subplots(1, 2, figsize=figsize, subplot_kw={'polar': True})
+
+    for ax, cfg in zip(axes, configs):
+        df = cfg['df'].copy()
+        grupo_0    = df[df['failures'] == 0]
+        grupo_3mas = df[df['failures'] >= 3]
+
+        global_min = df[metricas].min()
+        global_max = df[metricas].max()
+
+        def normalizar(grupo):
+            return ((grupo[metricas].mean() - global_min) /
+                    (global_max - global_min)).clip(0, 1)
+
+        for niv in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]:
+            ax.plot(angulos, [niv] * len(angulos), color='#CCCCCC', linewidth=0.6)
+            ax.text(angulos[1], niv, f'{niv}', ha='center', va='bottom',
+                    fontsize=7.5, color='#888888')
+        for ang in angulos[:-1]:
+            ax.plot([ang, ang], [0, 1], color='#CCCCCC', linewidth=0.6)
+
+        for norm, color in [(normalizar(grupo_0), COLOR_0),
+                            (normalizar(grupo_3mas), COLOR_3MAS)]:
+            vals = norm.tolist() + norm.tolist()[:1]
+            ax.plot(angulos, vals, linewidth=2.3, color=color)
+            ax.fill(angulos, vals, alpha=0.13, color=color)
+
+        ax.set_ylim(0, 0.85)
+        ax.set_xticks(angulos[:-1])
+        ax.set_xticklabels(nombres_eje, fontsize=10)
+        ax.set_yticklabels([])
+        ax.grid(False)
+        ax.spines['polar'].set_visible(False)
+        ax.set_title(
+            f'{cfg["titulo"]}\n(0 reprob.: n={len(grupo_0)} | 3+ reprob.: n={len(grupo_3mas)})',
+            pad=28, fontsize=11.5, fontweight='bold'
+        )
+        ax.legend(handles=[
+            Line2D([0], [0], color=COLOR_0,    linewidth=2.3, label='0 reprobaciones'),
+            Line2D([0], [0], color=COLOR_3MAS, linewidth=2.3, label='3+ reprobaciones'),
+        ], loc='lower center', bbox_to_anchor=(0.5, -0.20), ncol=2, frameon=False, fontsize=9.5)
+
+    plt.suptitle('Perfil comparativo de estudiantes según historial de reprobaciones: 0 vs. 3+ reprobaciones',
+                 fontsize=13, fontweight='bold', y=1.02)
+    plt.tight_layout()
+    os.makedirs(output_dir, exist_ok=True)
+    plt.savefig(os.path.join(output_dir, 'fig_radar_reprobaciones.png'), dpi=dpi, bbox_inches='tight')
+    plt.show()
+
+
+    # ============================================================
+# GENERADOR DE DATOS SINTÉTICOS — respaldo de reproducibilidad
+# Replica el esquema del Student Performance Dataset con las
+# proporciones observadas en la Fase 2 del proyecto.
+# ============================================================
+SEMILLA = 42
+np.random.seed(SEMILLA)
+def generar_datos_sinteticos_estudiantes(asignatura: str,
+                                          semilla: int = SEMILLA) -> pd.DataFrame:
+    """
+    Genera un DataFrame con el mismo esquema que el Student Performance Dataset
+    (Cortez & Silva, 2008). Se usa SOLO como respaldo cuando los CSV originales
+    no están disponibles, garantizando que el pipeline sea ejecutable de
+    principio a fin sin dependencias externas.
+
+    Parámetros
+    ----------
+    n          : número de filas a generar (395 para mat, 649 para por).
+    asignatura : 'mat' o 'por' — ajusta las proporciones según los
+                 estadísticos observados en la Fase 2.
+    semilla    : semilla para reproducibilidad (default = SEMILLA global).
+
+    Retorna
+    -------
+    pd.DataFrame con las 33 columnas originales del dataset.
+    """
+    rng = np.random.default_rng(semilla)
+    if asignatura == 'Matemáticas':
+        n = 395
+    elif asignatura == 'Portugués':
+        n = 649
+
+    # Proporciones calibradas con los estadísticos de Fase 2
+    g3_boost = 1 if asignatura == 'por' else 0   # Portugués tiene media G3 ~1 pt mayor
+
+    g1 = rng.integers(4, 19, n)
+    g2 = np.clip(g1 + rng.integers(-2, 3, n), 0, 20)
+    g3 = np.clip(g2 + rng.integers(-2, 3, n) + g3_boost, 0, 20)
+
+    df = pd.DataFrame({
+        # Variables demográficas
+        'school'    : rng.choice(['GP', 'MS'], n, p=[0.78, 0.22]),
+        'sex'       : rng.choice(['F', 'M'],   n, p=[0.53, 0.47]),
+        'age'       : rng.integers(15, 22, n),
+        'address'   : rng.choice(['U', 'R'],   n, p=[0.77, 0.23]),
+        'famsize'   : rng.choice(['GT3', 'LE3'], n, p=[0.74, 0.26]),
+        'Pstatus'   : rng.choice(['T', 'A'],   n, p=[0.90, 0.10]),
+        # Variables socioeconómicas
+        'Medu'      : rng.integers(0, 5, n),
+        'Fedu'      : rng.integers(0, 5, n),
+        'Mjob'      : rng.choice(['teacher','health','services','at_home','other'], n,
+                                 p=[0.09, 0.09, 0.18, 0.20, 0.44]),
+        'Fjob'      : rng.choice(['teacher','health','services','at_home','other'], n,
+                                 p=[0.07, 0.04, 0.23, 0.08, 0.58]),
+        'reason'    : rng.choice(['home','reputation','course','other'], n,
+                                 p=[0.27, 0.31, 0.27, 0.15]),
+        'guardian'  : rng.choice(['mother','father','other'], n, p=[0.60, 0.33, 0.07]),
+        # Hábitos de estudio
+        'traveltime': rng.choice([1,2,3,4], n, p=[0.48, 0.35, 0.12, 0.05]),
+        'studytime' : rng.choice([1,2,3,4], n, p=[0.20, 0.45, 0.25, 0.10]),
+        'failures'  : rng.choice([0,1,2,3], n, p=[0.67, 0.18, 0.10, 0.05]),
+        # Apoyo escolar y familiar
+        'schoolsup' : rng.choice(['yes','no'], n, p=[0.18, 0.82]),
+        'famsup'    : rng.choice(['yes','no'], n, p=[0.55, 0.45]),
+        'paid'      : rng.choice(['yes','no'], n, p=[0.35, 0.65]),
+        'activities': rng.choice(['yes','no'], n, p=[0.50, 0.50]),
+        'nursery'   : rng.choice(['yes','no'], n, p=[0.81, 0.19]),
+        'higher'    : rng.choice(['yes','no'], n, p=[0.94, 0.06]),
+        'internet'  : rng.choice(['yes','no'], n, p=[0.84, 0.16]),
+        'romantic'  : rng.choice(['yes','no'], n, p=[0.34, 0.66]),
+        # Hábitos sociales
+        'famrel'    : rng.integers(1, 6, n),
+        'freetime'  : rng.integers(1, 6, n),
+        'goout'     : rng.integers(1, 6, n),
+        'Dalc'      : rng.integers(1, 6, n),
+        'Walc'      : rng.integers(1, 6, n),
+        'health'    : rng.integers(1, 6, n),
+        'absences'  : rng.integers(0, 30, n),
+        # Calificaciones
+        'G1': g1, 'G2': g2, 'G3': g3,
+    })
+    return df
