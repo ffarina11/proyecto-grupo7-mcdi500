@@ -55,6 +55,7 @@ proyecto-grupo7-mcdi500/
 │   ├── F1_Definicion.ipynb                  # Fase 1: Definición del problema y EDA inicial
 │   └── F2_limpieza.ipynb                    # Fase 2: Limpieza, transformación y validación
 │   └── F3_Nucleo_Algoritmico_POO.ipynb      # Fase 3: Núcleo algorítmico y POO
+│   └── F4_Integracion_Cierre_Tecnico.ipynb       # Fase 4: Integración, Análisis de Resultados y Cierre Técnico
 │
 ├── 📂 src/                        # Scripts reutilizables
 │   ├── functions.py               # Pipeline funcional (Fase 2)
@@ -209,8 +210,63 @@ La Fase 3 incorpora nuevos módulos reutilizables dentro de src/:
 - Exportación de datasets limpios y transformados para etapas posteriores del proyecto.
 
 
+## Integración, Análisis de Resultados y Cierre Técnico
 
-> **Nota:** Todas las dependencias necesarias para ejecutar los notebooks y scripts del proyecto se encuentran especificadas en `requirements.txt`. La instalación del entorno se describe en la sección **Cómo reproducir el entorno**.
+La Fase 4 consolida los componentes desarrollados en las etapas anteriores del proyecto, integrando el pipeline de preprocesamiento, la arquitectura orientada a objetos y los mecanismos de validación implementados previamente. Además, se realiza el análisis final de resultados, la generación de visualizaciones interpretativas y la documentación técnica de cierre del proyecto.
+
+### 1. Ejecución del notebook
+
+Con el entorno virtual activo, desde la raíz del repositorio:
+
+```bash
+jupyter lab 
+```
+
+Luego abrir:
+
+```bash
+notebooks/F4_Integracion_Cierre_Tecnico.ipynb
+```
+y ejecutar con Kernel → Restart & Run All.
+
+### 2. Integración de componentes
+
+La Fase 4 articula los desarrollos implementados en las fases anteriores dentro de un flujo de trabajo unificado:
+
+| Componente | Descripción |
+| :--- | :--- |
+| Pipeline funcional (F2) | Reutilización de las funciones de limpieza, transformación y validación de datos. |
+| Arquitectura POO (F3) | Uso de clases especializadas para el procesamiento de los datasets de Matemáticas y Portugués. |
+| Validación técnica | Verificación de consistencia, integridad y reproducibilidad de los resultados obtenidos. |
+| Análisis de resultados | Evaluación de relaciones entre variables y rendimiento académico mediante métricas y visualizaciones. |
+| Documentación final | Consolidación de evidencias técnicas y trazabilidad del proyecto. |
+
+### 3. Funcionalidades implementadas
+
+- Integración completa de los componentes desarrollados en las fases anteriores.
+- Ejecución automatizada del flujo de procesamiento de datos mediante clases reutilizables.
+- Validación de resultados mediante pruebas de consistencia e integridad de los datasets.
+- Generación de estadísticas descriptivas y análisis comparativos entre asignaturas.
+- Construcción de visualizaciones para apoyar la interpretación de los hallazgos obtenidos.
+- Consolidación de resultados y evidencias para la documentación final del proyecto.
+- Verificación de reproducibilidad mediante ejecución completa del notebook sin intervención manual.
+
+### 4. Resultados generados
+
+La ejecución de la Fase 4 genera visualizaciones exploratorias, gráficos comparativos y evidencias utilizadas para el análisis final de los datos. Estos resultados permiten interpretar las relaciones entre las variables estudiadas, respaldar los hallazgos obtenidos durante el proyecto y facilitar la comunicación de resultados mediante representaciones visuales claras y reproducibles.
+
+
+### 5. Cierre técnico
+
+Como parte del cierre técnico del proyecto se verifica que:
+
+- Todos los notebooks son ejecutables de principio a fin mediante **Restart & Run All**.
+- Las dependencias del proyecto se encuentran documentadas en `requirements.txt`.
+- Los resultados son reproducibles utilizando los datos originales almacenados en `data/raw`.
+- La estructura del repositorio mantiene trazabilidad entre código, datos, documentación y resultados.
+- Las decisiones técnicas implementadas durante el desarrollo quedan documentadas en los notebooks y en el repositorio GitHub.
+
+
 
 ##  Información del Dataset
 
