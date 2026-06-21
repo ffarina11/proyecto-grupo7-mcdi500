@@ -46,7 +46,8 @@ proyecto-grupo7-mcdi500/
 │   │   ├── student_por_clean_encode.csv
 │   │   ├──student_union_clean_encode.csv
 │   │   ├── fig_distribucion_g3.png 
-│   │   └── 📂 F3                        # Archivos generados por métodos de la clase
+│   │   ├── 📂 F3                        # Archivos generados por métodos de la clase F3
+│   │   └── 📂 F4                        # Archivos generados por métodos de la clase F4
 │   │   
 │   └── 📂 development/             # Figuras y outputs exploratorios 
 │       
