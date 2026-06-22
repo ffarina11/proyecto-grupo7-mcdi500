@@ -321,7 +321,7 @@ def codificar_ohe(df: pd.DataFrame) -> pd.DataFrame:
 # ============================================================
 # FUNCIÓN: crear_variables_derivadas
 # Genera nuevas variables con valor analítico directo:
-#   nota_promedio, aprobado, progreso_g1_g3,
+#    aprobado, progreso_g1_g3,
 #   nivel_alcohol, edu_familiar_media
 # Parámetros: df (DataFrame)
 # Retorna: pd.DataFrame con variables derivadas
@@ -670,7 +670,7 @@ def generar_datos_sinteticos_estudiantes(asignatura: str,
         n = 649
 
     # Proporciones calibradas con los estadísticos de Fase 2
-    g3_boost = 1 if asignatura == 'por' else 0   # Portugués tiene media G3 ~1 pt mayor
+    g3_boost = 1 if asignatura == 'Portugués' else 0   # Portugués tiene media G3 ~1 pt mayor
 
     g1 = rng.integers(4, 19, n)
     g2 = np.clip(g1 + rng.integers(-2, 3, n), 0, 20)
